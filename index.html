@@ -1,0 +1,113 @@
+<!DOCTYPE html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QualCode</title>
+<meta name="description" content="Free browser-based tool for reflexive thematic analysis: code transcripts, build a codebook, retrieve quotes and keep a reflexive journal. No install, no account, data stays with you.">
+<meta name="theme-color" content="#f8f7f3">
+<meta name="theme-color" content="#f8f7f3">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta property="og:title" content="QualCode">
+<meta property="og:description" content="Free browser-based tool for reflexive thematic analysis: code transcripts, build a codebook, retrieve quotes and keep a reflexive journal. No install, no account, data stays with you.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+
+<style>
+:root{color-scheme:light;--bg:#f8f7f3;--fg:#20262a;--mut:#5c6663;--card:#ffffff;--bd:#e5e3dc;--ac:#0f766e;--ok:#15803d;--no:#b91c1c;--mb:#b45309}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#191816;--fg:#edeae3;--mut:#a9a398;--card:#211f1c;--bd:#383530;--ac:#35b5a9;--ok:#6fce7f;--no:#f08579;--mb:#e0a13c}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{font:15.5px/1.55 system-ui,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+#app{display:grid;grid-template-columns:210px 1fr 360px;height:calc(100% - 55px)}#app>*{overflow:auto;padding:10px;border-right:1px solid var(--bd)}
+button,input,select,textarea,.btn{font:inherit;color:inherit;background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:4px 9px;cursor:pointer}
+button:hover,.btn:hover{border-color:var(--ac)}button.on,button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+input,select,textarea{cursor:text;max-width:100%}textarea{width:100%;min-height:90px}
+.bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}.h{font-weight:600;margin:10px 0 4px}.m{color:var(--mut);font-size:12px}
+#doc{white-space:pre-wrap;font:16px/1.7 Georgia,serif;max-width:760px;margin:8px auto}.h2{cursor:pointer}
+span.h{font-weight:400;margin:0;border-radius:2px;cursor:pointer}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;margin-bottom:6px}
+.row{display:flex;gap:6px;align-items:center;margin-bottom:5px}.row b{flex:1}i.d{width:12px;height:12px;border-radius:3px;display:inline-block;flex:none}
+.dc{display:flex;justify-content:space-between;padding:4px 6px;border-radius:6px;cursor:pointer}.dc.on{background:var(--card);outline:1px solid var(--ac)}
+blockquote{margin:4px 0;padding-left:8px;border-left:3px solid var(--bd)}dialog{background:var(--bg);color:var(--fg);width:min(600px,92vw)}
+.bx{height:10px;background:var(--ac);border-radius:3px}
+
+h1,h2,h3{font-family:ui-serif,"Iowan Old Style",Georgia,"Times New Roman",serif;letter-spacing:-.01em}
+.omlink{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--bd);border-radius:9px;background:var(--card);color:var(--fg);text-decoration:none;font-size:12.5px;font-weight:600;cursor:pointer}
+.omlink:hover{border-color:var(--ac);color:var(--ac)}
+#theme-btn{width:34px;height:34px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;color:var(--mut)}
+#theme-btn:hover{color:var(--fg);border-color:var(--ac)}
+#theme-btn svg{width:16px;height:16px}
+@media(max-width:900px){html,body{height:auto}#app{display:block;height:auto}#app>*{height:auto;overflow:visible;border-right:none;border-bottom:1px solid var(--bd)}#doc{min-height:240px}}
+.bar>*{min-width:0}.bar textarea{flex:1 1 140px;width:140px;max-width:100%}
+
+/* portfolio integration: keep grids shrinkable and textareas reflowable */
+#g{grid-template-columns:minmax(0,1fr) 300px!important}
+@media(max-width:800px){#g{grid-template-columns:minmax(0,1fr)!important}}
+textarea{min-width:0;width:100%}
+.bar>*{min-width:0}
+.bar textarea{flex:1 1 140px;width:140px;max-width:100%}
+input[type=file]{max-width:100%}
+</style></head><body><header style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bd);background:var(--card)"><h1 style="font-size:17px;margin:0">QualCode</h1><span style="flex:1"></span><a class="omlink" href="https://github.com/PsychandMe">More tools</a><button id="theme-btn" aria-label="Switch theme"></button></header><div id="app">
+<aside><div class="h">Transcripts</div><div class="bar"><label class="btn">Import .txt/.md<input type="file" id="fi" multiple accept=".txt,.md,text/plain" hidden></label><button onclick="dlg.showModal()">Paste</button></div><div id="dl"></div>
+<div class="h">Project</div><div class="bar"><button onclick="exp()">Save .json</button><label class="btn">Open<input type="file" id="pi" accept=".json" hidden></label></div><p class="m">Everything stays on this computer. Autosaves in the browser; use Save .json for backups. Shortcuts: select text, press 1–9.</p></aside>
+<section><div id="top" class="m"></div><div id="doc"></div></section>
+<aside><div class="bar" id="tabs"></div><div id="sd"></div></aside></div>
+<dialog id="dlg"><div class="bar"><input id="pn" placeholder="Transcript name" style="flex:1"></div><textarea id="pt" style="min-height:260px" placeholder="Paste transcript…"></textarea><div class="bar" style="margin-top:8px"><button class="p" onclick="addP()">Add</button><button onclick="dlg.close()">Cancel</button></div></dialog>
+<script>
+const $=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,9),E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let S=JSON.parse(localStorage.getItem('qc')||'null')||{docs:[],codes:[],segs:[],journal:[]},cur=S.docs[0]?.id,pend=null,tab='codes',rf='';
+const sv=()=>{try{localStorage.setItem('qc',JSON.stringify(S))}catch(e){}},PAL=['#e6194b','#3cb44b','#f58231','#4363d8','#911eb4','#0ea5c6','#d946a8','#bfa100','#469990','#9a6324'];
+const PH=['1 Familiarisation','2 Generating initial codes','3 Generating themes','4 Reviewing themes','5 Defining and naming themes','6 Writing up'];
+const cd=id=>S.codes.find(c=>c.id==id),dn=id=>S.docs.find(d=>d.id==id)?.name||'?',cnt=id=>S.segs.filter(s=>s.code==id).length,th=c=>c.theme||'(unassigned)';
+const dl=(n,t,m='text/plain')=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m+';charset=utf-8'}));a.download=n;a.click()};
+const all=()=>{sv();docs();doc();side()};
+function docs(){$('#dl').innerHTML=S.docs.map(d=>`<div class="dc ${d.id==cur?'on':''}" onclick="cur='${d.id}';pend=null;all()"><span>${E(d.name)} <span class="m">${S.segs.filter(s=>s.doc==d.id).length}</span></span><span onclick="event.stopPropagation();delDoc('${d.id}')" title="Delete">×</span></div>`).join('')||'<p class="m">No transcripts yet.</p>';
+$('#tabs').innerHTML=[['codes','Codes'],['themes','Themes'],['retrieve','Retrieve'],['journal','Journal'],['insights','Insights']].map(([k,l])=>`<button class="${tab==k?'on':''}" onclick="tab='${k}';side();docs()">${l}</button>`).join('')}
+function doc(){const d=S.docs.find(x=>x.id==cur),h=$('#doc');$('#top').textContent='';if(!d){h.textContent='Import or paste a transcript to begin.';return}
+const ss=S.segs.filter(s=>s.doc==d.id),b=[...new Set([0,d.text.length,...ss.flatMap(s=>[s.a,s.b])])].sort((x,y)=>x-y);
+h.innerHTML=b.slice(0,-1).map((a,i)=>{const e=b[i+1],t=E(d.text.slice(a,e)),c=ss.filter(s=>s.a<=a&&s.b>=e);if(!c.length)return t;const cs=c.map(s=>cd(s.code)).filter(Boolean);
+return `<span class="h" data-s="${c.map(s=>s.id).join(',')}" style="background:${cs[0].col}55;${cs[1]?`box-shadow:inset 0 -3px ${cs[1].col}`:''}">${t}</span>`}).join('')}
+$('#doc').addEventListener('mouseup',e=>{const s=getSelection(),c=$('#doc');
+if(s.rangeCount&&!s.isCollapsed&&c.contains(s.getRangeAt(0).commonAncestorContainer)){const r=s.getRangeAt(0),p=document.createRange();p.selectNodeContents(c);p.setEnd(r.startContainer,r.startOffset);const a=p.toString().length,t=r.toString();pend={a,b:a+t.length,t};$('#top').textContent=`Selected ${t.length} characters. Choose a code (click Apply or press 1–9).`;return}
+const h=e.target.closest('.h');pend=null;if(h)$('#top').innerHTML='Codes here: '+h.dataset.s.split(',').map(id=>{const g=S.segs.find(x=>x.id==id),k=g&&cd(g.code);return k?`<button onclick="rm('${id}')">${E(k.name)} ×</button>`:''}).join(' ')});
+function apply(id){if(!pend||!cur){$('#top').textContent='Select some text in the transcript first.';return}S.segs.push({id:uid(),doc:cur,a:pend.a,b:pend.b,code:id,text:pend.t});pend=null;getSelection().removeAllRanges();all()}
+const rm=id=>{S.segs=S.segs.filter(s=>s.id!=id);all()};
+document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.ctrlKey||e.metaKey)return;const n=+e.key;if(n>=1&&n<=9&&S.codes[n-1])apply(S.codes[n-1].id)});
+function addC(){const v=$('#nc').value.trim();if(!v)return;S.codes.push({id:uid(),name:v,col:PAL[S.codes.length%PAL.length],def:'',theme:''});all()}
+function editC(id){const c=cd(id),n=prompt('Code name (leave empty to delete this code and its segments)',c.name);if(n===null)return;
+if(!n.trim()){if(confirm('Delete code and its '+cnt(id)+' segments?')){S.codes=S.codes.filter(k=>k.id!=id);S.segs=S.segs.filter(s=>s.code!=id)}return all()}
+c.name=n.trim();const d=prompt('Definition / inclusion criteria',c.def||'');if(d!==null)c.def=d;const t=prompt('Theme (existing: '+([...new Set(S.codes.map(k=>k.theme).filter(Boolean))].join(', ')||'none')+')',c.theme||'');if(t!==null)c.theme=t.trim();all()}
+function delDoc(id){if(!confirm('Delete this transcript and its coding?'))return;S.docs=S.docs.filter(d=>d.id!=id);S.segs=S.segs.filter(s=>s.doc!=id);if(cur==id)cur=S.docs[0]?.id;all()}
+function addP(){const t=$('#pt').value;if(!t.trim())return;S.docs.push({id:uid(),name:$('#pn').value||'Transcript '+(S.docs.length+1),text:t.replace(/\r\n/g,'\n')});cur=S.docs.at(-1).id;$('#pt').value=$('#pn').value='';dlg.close();all()}
+$('#fi').onchange=async e=>{for(const f of e.target.files)S.docs.push({id:uid(),name:f.name.replace(/\.\w+$/,''),text:(await f.text()).replace(/\r\n/g,'\n')});e.target.value='';cur=cur||S.docs[0]?.id;all()};
+$('#pi').onchange=async e=>{try{S=JSON.parse(await e.target.files[0].text());cur=S.docs[0]?.id;all()}catch(x){alert('Not a valid project file')}};
+const exp=()=>dl('qualcode-project-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(S));
+function side(){const h=$('#sd');
+if(tab=='codes')h.innerHTML=`<div class="bar"><input id="nc" placeholder="New code…" onkeydown="if(event.key=='Enter')addC()" style="flex:1"><button class="p" onclick="addC()">Add</button></div>`+S.codes.map((c,i)=>`<div class="row"><i class="d" style="background:${c.col}"></i><b title="${E(c.def)}">${E(c.name)}</b><span class="m">${cnt(c.id)}</span><button onmousedown="event.preventDefault()" onclick="apply('${c.id}')">${i<9?i+1+' ':''}Apply</button><button onclick="editC('${c.id}')">Edit</button></div>`).join('');
+if(tab=='themes'){const g={};S.codes.forEach(c=>(g[th(c)]??=[]).push(c));h.innerHTML='<p class="m">Group codes into candidate themes with Edit on the Codes tab.</p>'+Object.entries(g).map(([t,cs])=>`<div class="c"><b>${E(t)}</b> <span class="m">${cs.reduce((a,c)=>a+cnt(c.id),0)} segments</span>${cs.map(c=>`<div><i class="d" style="background:${c.col}"></i> ${E(c.name)} (${cnt(c.id)})<div class="m">${E(c.def)}</div></div>`).join('')}</div>`).join('')+'<div class="bar"><button onclick="mdBook()">Codebook (.md)</button><button onclick="csv()">Coded segments (.csv)</button></div>'}
+if(tab=='retrieve'){const ts=[...new Set(S.codes.map(th))],ids=rf.startsWith('t:')?S.codes.filter(c=>th(c)==rf.slice(2)).map(c=>c.id):rf?[rf]:[];
+h.innerHTML=`<select onchange="rf=this.value;side()"><option value="">Choose code or theme…</option>${S.codes.map(c=>`<option value="${c.id}" ${rf==c.id?'selected':''}>${E(c.name)}</option>`).join('')}${ts.map(t=>`<option value="t:${E(t)}" ${rf=='t:'+t?'selected':''}>Theme: ${E(t)}</option>`).join('')}</select>`+S.segs.filter(s=>ids.includes(s.code)).map(s=>`<div class="c"><div class="m">${E(dn(s.doc))} · ${E(cd(s.code)?.name)}</div><blockquote>${E(s.text)}</blockquote><button onclick="cur='${s.doc}';all()">Open transcript</button></div>`).join('')}
+if(tab=='journal')h.innerHTML=`<select id="jp">${PH.map(p=>`<option>${p}</option>`).join('')}</select><textarea id="jt" placeholder="Reflexive note: assumptions, decisions, why a code was merged or split…"></textarea><div class="bar"><button class="p" onclick="addJ()">Add entry</button><button onclick="dl('reflexive-journal.md',S.journal.map(j=>'### '+j.t+' ('+j.p+(j.d?', '+dn(j.d):'')+')\\n'+j.x).join('\\n\\n'))">Export (.md)</button></div>`+[...S.journal].reverse().map(j=>`<div class="c"><div class="m">${j.t} · ${j.p}${j.d?' · '+E(dn(j.d)):''}</div>${E(j.x)}</div>`).join('');
+if(tab=='insights'){const f={};S.docs.forEach((d,i)=>S.segs.filter(s=>s.doc==d.id).forEach(s=>{if(f[s.code]==null||i<f[s.code])f[s.code]=i}));let cum=0;
+const rows=S.docs.map((d,i)=>{const n=Object.values(f).filter(v=>v==i).length;cum+=n;return `<div class="m">${E(d.name)}: ${n} new, ${cum} cumulative</div><div class="bx" style="width:${S.codes.length?cum/S.codes.length*100:0}%"></div>`}).join('');
+h.innerHTML=`<div class="h">Code emergence by transcript</div>${rows||'<p class="m">Add transcripts and code them.</p>'}<p class="m">A flattening curve can prompt reflection on how far your analysis has developed, but under reflexive thematic analysis it is not a stopping rule (Braun &amp; Clarke, 2021). Consider information power instead: study aim, sample specificity, use of theory, dialogue quality and analysis strategy (Malterud et al., 2016).</p>`}}
+function addJ(){const x=$('#jt').value.trim();if(!x)return;S.journal.push({t:new Date().toLocaleString('en-GB'),p:$('#jp').value,d:cur,x});all()}
+const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
+const csv=()=>dl('coded-segments.csv','Transcript,Code,Theme,Start,End,Excerpt\n'+S.segs.map(s=>{const c=cd(s.code)||{};return[dn(s.doc),c.name,th(c),s.a,s.b,s.text].map(q).join(',')}).join('\n'),'text/csv');
+function mdBook(){const g={};S.codes.forEach(c=>(g[th(c)]??=[]).push(c));dl('codebook.md','# Codebook\n\n'+Object.entries(g).map(([t,cs])=>`## ${t}\n\n`+cs.map(c=>`### ${c.name} (n = ${cnt(c.id)})\n${c.def||'_No definition yet._'}\n\n`+S.segs.filter(s=>s.code==c.id).slice(0,2).map(s=>`> ${s.text.replace(/\n/g,' ')} (${dn(s.doc)})`).join('\n')).join('\n\n')).join('\n\n'))}
+all();
+</script><footer style="max-width:1100px;margin:0 auto;padding:18px 16px 28px;border-top:1px solid var(--bd);color:var(--mut);font-size:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between">
+<span>QualCode — free, no account needed. Your data stays in this browser; export a backup regularly.</span>
+<span>Built by <a href="https://github.com/PsychandMe" style="color:var(--ac)">Joshua Bellot — Psych &amp; Me</a>.</span>
+</footer>
+
+
+<script>
+(function(){
+  var K="qualcode-theme",b=document.getElementById("theme-btn");
+  var MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  var SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
+  function apply(t){document.documentElement.dataset.theme=t;b.innerHTML=t==="dark"?SUN:MOON;
+    document.querySelector('meta[name="theme-color"]').setAttribute("content",t==="dark"?"#211f1c":"#f8f7f3");}
+  var saved=localStorage.getItem(K);
+  apply(saved==="dark"||saved==="light"?saved:(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
+  b.addEventListener("click",function(){var n=document.documentElement.dataset.theme==="dark"?"light":"dark";
+    localStorage.setItem(K,n);apply(n);});
+})();
+</script>
+</body></html>
